@@ -60,7 +60,6 @@ You can find `Podman Desktop` here: https://podman-desktop.io/downloads
 
 Visit the [Ollama download](https://ollama.com/download/mac) page, and click on the `Download for macOS` button.
 
-
 ```zsh
 ollama run llama3
 ```
@@ -105,7 +104,7 @@ x-n8n: &service-n8n
 > 2. Ensure the host machine has Ollama running and accessible at the specified `OLLAMA_HOST=ollama:11434` address.
 > 3. Modify the compose file to remove the host-specific networking if you want Ollama to run entirely within the container environment.
 
-## Launch N8N
+## N8N Locally
 
 Run the following command to start n8n:
 
@@ -155,3 +154,7 @@ recreating them.
 >
 > It's worth noting that Podman can use Docker images (as indicated by the `docker.io/` prefix in the image names)
 > because it's compatible with the OCI (Open Container Initiative) standards, which both Docker and Podman adhere to.
+
+### Ollama Credential
+
+Ollama Credential: base URL http://host.docker.internal:11434

@@ -1,0 +1,90 @@
+{
+  "name": "ollama_tool_agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "5c6c8d58-612d-4dee-a1b9-b3825425352f",
+      "name": "When chat message received",
+      "webhookId": "c5914b14-624c-40f0-be71-c2bcfb8f7d5e"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "6afdd595-18b5-47d8-836f-a230e371246c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama3:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        480,
+        220
+      ],
+      "id": "2da195a9-2f03-478a-8e73-3268c4a217c8",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "UmcTuGsi80PLOmDO",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a7e86a46-5cf3-4a2f-b905-cb28b6179da6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d7d4a7f1e3c08e477a04178f2364b3feec2a42b22e1300d29101f0eb9d51570c"
+  },
+  "id": "Lm72zCHMeP1J99mV",
+  "tags": []
+}
