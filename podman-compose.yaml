@@ -4,6 +4,8 @@ volumes:
   n8n_storage:
   postgres_storage:
   ollama_storage:
+  open_webui_storage:
+  pgadmin_storage:
   qdrant_storage:
 
 networks:
@@ -14,7 +16,8 @@ x-n8n: &service-n8n
   networks: ['demo']
   environment:
     - DB_TYPE=postgresdb
-    - DB_POSTGRESDB_HOST=postgres
+    - DB_POSTGRESDB_HOST=postgres-podman
+    - DB_POSTGRESDB_PORT=5432
     - DB_POSTGRESDB_USER=${POSTGRES_USER}
     - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
     - N8N_DIAGNOSTICS_ENABLED=false
@@ -52,6 +55,7 @@ services:
   postgres:
     image: docker.io/postgres:16-alpine
     hostname: postgres
+    container_name: postgres-podman
     networks: ['demo']
     restart: always
     environment:
@@ -60,6 +64,35 @@ services:
       - POSTGRES_DB
     volumes:
       - postgres_storage:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: docker.io/dpage/pgadmin4:latest
+    container_name: pgadmin
+    networks: ['demo']
+    restart: always
+    ports:
+      - "9876:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=marksusol@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - pgadmin_storage:/var/lib/pgadmin
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    restart: unless-stopped
+    container_name: open-webui
+    depends_on:
+      - n8n
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - ENABLE_FUNCTIONS=True
+    volumes:
+      - open_webui_storage:/app/backend/data
 
   n8n-import:
     <<: *service-n8n
@@ -74,11 +107,13 @@ services:
 
   n8n:
     <<: *service-n8n
-    hostname: n8n
-    container_name: n8n
+    hostname: n8n-podman
+    container_name: n8n-podman
     restart: always
     ports:
       - 5678:5678
+    environment:
+      - WEBHOOK_URL=http://n8n-podman:5678
     volumes:
       - ./n8n_storage:/home/node/.n8n
       - ./n8n/backup:/backup
